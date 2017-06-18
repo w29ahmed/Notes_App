@@ -68,9 +68,6 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_create_sample:
-                insertSampleData();
-                break;
             case R.id.action_delete_all:
                 deleteAllNotes();
                 break;
@@ -105,13 +102,6 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
 
     }
 
-    private void insertSampleData() {
-        insertNote("Simple note");
-        insertNote("Multi-line\nnote");
-        insertNote("Very long note with a lot of text that exceeds the width" +
-                "of the screen");
-        restartLoader();
-    }
 
     private void restartLoader() {
         getSupportLoaderManager().restartLoader(0, null, this);

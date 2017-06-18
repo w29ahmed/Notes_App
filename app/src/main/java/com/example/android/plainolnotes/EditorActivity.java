@@ -1,9 +1,11 @@
 package com.example.android.plainolnotes;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -46,6 +48,7 @@ public class EditorActivity extends AppCompatActivity {
             editor.setText(oldText);
             //Move cursor to end of existing text
             editor.requestFocus();
+            cursor.close();
         }
     }
 
@@ -101,11 +104,29 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        getContentResolver().delete(NotesProvider.CONTENT_URI,
-                noteFilter, null);
-        Toast.makeText(this, R.string.note_deleted, Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();
+
+        DialogInterface.OnClickListener dialogClickListener =
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int button) {
+                        if (button == DialogInterface.BUTTON_POSITIVE) {
+                            //delete the data
+                            getContentResolver().delete(NotesProvider.CONTENT_URI,
+                                    noteFilter, null);
+
+                            Toast.makeText(EditorActivity.this, R.string.note_deleted, Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    }
+                };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.are_you_sure))
+                .setPositiveButton(getString(android.R.string.yes), dialogClickListener)
+                .setNegativeButton(getString(android.R.string.no), dialogClickListener)
+                .show();
+
     }
 
     private void updateNote(String noteText) {
